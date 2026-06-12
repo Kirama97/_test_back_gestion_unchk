@@ -1,0 +1,9 @@
+package com.gestion_unchk.gestion_unchk.dto;
+
+import lombok.Data;
+
+@Data
+public class LoginRequest {
+    private String email;
+    private String password;
+}
