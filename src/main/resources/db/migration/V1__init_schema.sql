@@ -123,13 +123,13 @@ CREATE TABLE partenaires (
 );
 
 -- Insérer les utilisateurs par défaut (le mot de passe crypté est "Passer123")
--- BCrypt : $2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O
+-- BCrypt : $2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e
 INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe, role, departement, statut) VALUES
-('Sarr', 'Abdoulaye', 'admin@gmail.com', '$2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O', 'ADMIN', 'Scolarité', 'Actif'),
-('Thiam', 'Diene', 'etudiant@gmail.com', '$2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O', 'ETUDIANT', 'Informatique', 'Actif'),
-('Ndiaye', 'Moussa', 'enseignant@gmail.com', '$2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O', 'ENSEIGNANT', 'Informatique', 'Actif'),
-('Diop', 'Fatou', 'tuteur@gmail.com', '$2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O', 'TUTEUR', 'Mathématiques', 'Actif'),
-('Diallo', 'Ibrahima', 'insertion@gmail.com', '$2a$10$gP7U.V65UoOQ5aY2.oVoeexD5p2eNqG7wQnE7L68eA2R2m.m7Qc.O', 'INSERTION', 'Relations Professionnelles', 'Actif');
+('Sarr', 'Abdoulaye', 'admin@gmail.com', '$2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e', 'ADMIN', 'Scolarité', 'Actif'),
+('Thiam', 'Diene', 'etudiant@gmail.com', '$2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e', 'ETUDIANT', 'Informatique', 'Actif'),
+('Ndiaye', 'Moussa', 'enseignant@gmail.com', '$2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e', 'ENSEIGNANT', 'Informatique', 'Actif'),
+('Diop', 'Fatou', 'tuteur@gmail.com', '$2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e', 'TUTEUR', 'Mathématiques', 'Actif'),
+('Diallo', 'Ibrahima', 'insertion@gmail.com', '$2a$10$b7UutYeGDbUw7EhXPg03P.tRAuYMd6U7jTp.x.delijGpn7X2jm9e', 'INSERTION', 'Relations Professionnelles', 'Actif');
 
 -- Insérer les détails de l'étudiant de test
 INSERT INTO etudiants (utilisateur_id, ine, date_naissance, filiere, promo, annee_debut, annee_sortie, diplomes, autres_formations) VALUES
