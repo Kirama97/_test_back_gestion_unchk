@@ -37,4 +37,7 @@ public class Utilisateur {
 
     @Column(length = 50)
     private String statut = "Actif";
+
+    @Column(length = 30)
+    private String telephone;
 }

@@ -34,6 +34,27 @@ public class Etudiant {
     @Column(nullable = false, length = 50)
     private String promo;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "filiere_id")
+    private Filiere filiereObj;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "promotion_id")
+    private Promotion promotionObj;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
+    @Column(name = "niveau_etude", length = 50)
+    private String niveauEtude;
+
+    @Column(length = 255)
+    private String adresse;
+
+    @Column(length = 30)
+    private String genre;
+
     @Column(name = "annee_debut", nullable = false)
     private Integer anneeDebut;
 

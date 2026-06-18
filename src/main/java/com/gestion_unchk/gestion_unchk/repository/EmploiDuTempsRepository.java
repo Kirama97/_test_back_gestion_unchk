@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface EmploiDuTempsRepository extends JpaRepository<EmploiDuTemps, Long> {
     List<EmploiDuTemps> findByFormationId(Long formationId);
+    List<EmploiDuTemps> findByClasseId(Long classeId);
+    List<EmploiDuTemps> findByCoursEnseignantId(Long enseignantId);
 }

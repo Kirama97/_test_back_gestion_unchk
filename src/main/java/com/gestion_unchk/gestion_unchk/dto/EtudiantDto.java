@@ -13,6 +13,13 @@ public class EtudiantDto {
     private LocalDate dateNaissance;
     private String filiere;
     private String promo;
+    private Long filiereId;
+    private Long promotionId;
+    private Long classeId;
+    private String niveauEtude;
+    private String adresse;
+    private String genre;
+    private String telephone;
     private Integer anneeDebut;
     private Integer anneeSortie;
     private String diplomes;

@@ -18,8 +18,16 @@ public class EmploiDuTemps {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "formation_id", nullable = false)
+    @JoinColumn(name = "formation_id")
     private Formation formation;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cours_id")
+    private Cours cours;
 
     @Column(name = "jour_semaine", nullable = false, length = 15)
     private String jourSemaine; // LUNDI, MARDI, MERCREDI, JEUDI, VENDREDI, SAMEDI

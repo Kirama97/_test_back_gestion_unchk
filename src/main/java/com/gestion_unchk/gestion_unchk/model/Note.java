@@ -23,8 +23,27 @@ public class Note {
     private Etudiant etudiant;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "formation_id", nullable = false)
+    @JoinColumn(name = "formation_id")
     private Formation formation;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "matiere_id")
+    private Matiere matiere;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "promotion_id")
+    private Promotion promotion;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sequence_id")
+    private Sequence sequence;
+
+    @Column(length = 50)
+    private String session = "Principale";
 
     @Column(nullable = false, precision = 4, scale = 2)
     private BigDecimal valeur;

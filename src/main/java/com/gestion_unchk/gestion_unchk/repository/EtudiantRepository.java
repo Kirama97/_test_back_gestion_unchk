@@ -10,4 +10,8 @@ import java.util.List;
 public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
     Optional<Etudiant> findByIne(String ine);
     List<Etudiant> findByFiliere(String filiere);
+    Optional<Etudiant> findByUtilisateurId(Long utilisateurId);
+    List<Etudiant> findByClasseId(Long classeId);
+    List<Etudiant> findByPromotionObjId(Long promotionId);
+    List<Etudiant> findByFiliereObjId(Long filiereId);
 }
