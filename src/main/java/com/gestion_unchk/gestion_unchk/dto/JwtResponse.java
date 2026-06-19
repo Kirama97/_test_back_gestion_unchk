@@ -12,4 +12,5 @@ public class JwtResponse {
     private String nom;
     private String prenom;
     private Long id;
+    private String photoProfil;
 }

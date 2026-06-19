@@ -95,6 +95,7 @@ public class EtudiantController {
         user.setDepartement(dto.getFiliere());
         user.setTelephone(dto.getTelephone());
         user.setStatut("Actif");
+        user.setPhotoProfil(dto.getPhotoProfil());
         
         Utilisateur savedUser = utilisateurRepository.save(user);
 
@@ -139,6 +140,7 @@ public class EtudiantController {
         if (dto.getPrenom() != null) user.setPrenom(dto.getPrenom());
         if (dto.getEmail() != null) user.setEmail(dto.getEmail());
         if (dto.getTelephone() != null) user.setTelephone(dto.getTelephone());
+        if (dto.getPhotoProfil() != null) user.setPhotoProfil(dto.getPhotoProfil());
         utilisateurRepository.save(user);
 
         if (dto.getDateNaissance() != null) etudiant.setDateNaissance(dto.getDateNaissance());

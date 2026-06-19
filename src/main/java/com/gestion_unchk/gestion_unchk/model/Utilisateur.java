@@ -40,4 +40,7 @@ public class Utilisateur {
 
     @Column(length = 30)
     private String telephone;
+
+    @Column(name = "photo_profil", length = 255)
+    private String photoProfil;
 }

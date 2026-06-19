@@ -116,6 +116,9 @@ public class AdministrationController {
             existingUser.setTelephone(userDetails.getTelephone());
             existingUser.setDepartement(userDetails.getDepartement());
             existingUser.setStatut(userDetails.getStatut());
+            if (userDetails.getPhotoProfil() != null) {
+                existingUser.setPhotoProfil(userDetails.getPhotoProfil());
+            }
             if (userDetails.getMotDePasse() != null && !userDetails.getMotDePasse().isEmpty()) {
                 existingUser.setMotDePasse(passwordEncoder.encode(userDetails.getMotDePasse()));
             }

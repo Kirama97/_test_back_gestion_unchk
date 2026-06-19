@@ -24,4 +24,5 @@ public class EtudiantDto {
     private Integer anneeSortie;
     private String diplomes;
     private String autresFormations;
+    private String photoProfil;
 }

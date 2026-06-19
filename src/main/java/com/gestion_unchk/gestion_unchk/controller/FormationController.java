@@ -35,6 +35,36 @@ public class FormationController {
     @Autowired
     private CoursRepository coursRepository;
 
+    @Autowired
+    private EtudiantRepository etudiantRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    private void notifyClassStudents(Classe classObj, EmploiDuTemps schedule, boolean isNew) {
+        if (classObj != null && classObj.getId() != null) {
+            List<Etudiant> students = etudiantRepository.findByClasseId(classObj.getId());
+            String timeStr = (schedule.getHeureDebut() != null ? schedule.getHeureDebut().toString() : "") 
+                + " - " + (schedule.getHeureFin() != null ? schedule.getHeureFin().toString() : "");
+            String prefix = isNew ? "Le cours de '" : "Le cours planifié de '";
+            String action = isNew ? "' a été planifié le " : "' a été modifié. Nouveau créneau : ";
+            String desc = prefix + schedule.getMatiere() + action + schedule.getJourSemaine() + " de " + timeStr + " (Salle: " + schedule.getSalle() + ").";
+            
+            for (Etudiant student : students) {
+                if (student.getUtilisateur() != null) {
+                    Notification notif = new Notification();
+                    notif.setTitre(isNew ? "Nouveau cours planifié" : "Cours planifié modifié");
+                    notif.setDescription(desc);
+                    notif.setCategory("schedule");
+                    notif.setLu(false);
+                    notif.setDestinataire(student.getUtilisateur());
+                    notif.setDateCreation(java.time.LocalDateTime.now());
+                    notificationRepository.save(notif);
+                }
+            }
+        }
+    }
+
     // Emplois du temps
     @GetMapping("/emplois-du-temps")
     public List<EmploiDuTemps> getEmploiDuTemps(@RequestParam(required = false) Long formationId) {
@@ -69,7 +99,12 @@ public class FormationController {
             }
         }
         
+        if (emploiDuTemps.getMatiere() == null && cours.getMatiere() != null) {
+            emploiDuTemps.setMatiere(cours.getMatiere().getNom());
+        }
+        
         EmploiDuTemps saved = emploiDuTempsRepository.save(emploiDuTemps);
+        notifyClassStudents(saved.getClasse() != null ? saved.getClasse() : cours.getClasse(), saved, true);
         return ResponseEntity.ok(saved);
     }
 
@@ -114,6 +149,7 @@ public class FormationController {
             }
             
             EmploiDuTemps saved = emploiDuTempsRepository.save(existing);
+            notifyClassStudents(saved.getClasse(), saved, false);
             return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }

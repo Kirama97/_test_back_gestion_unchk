@@ -45,7 +45,8 @@ public class AuthController {
                 utilisateur.getRole().name().toLowerCase(),
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
-                utilisateur.getId()
+                utilisateur.getId(),
+                utilisateur.getPhotoProfil()
         ));
     }
 
@@ -58,5 +59,19 @@ public class AuthController {
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
         
         return ResponseEntity.ok(utilisateur);
+    }
+
+    @PutMapping("/photo")
+    public ResponseEntity<?> updateProfilePhoto(@RequestBody java.util.Map<String, String> payload, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("Non authentifié");
+        }
+        Utilisateur user = utilisateurRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+        
+        String photoUrl = payload.get("photoProfil");
+        user.setPhotoProfil(photoUrl);
+        Utilisateur saved = utilisateurRepository.save(user);
+        return ResponseEntity.ok(saved);
     }
 }
