@@ -27,6 +27,11 @@ public class Classe {
     @JoinColumn(name = "filiere_id", nullable = false)
     private Filiere filiere;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tuteur_id")
+    private Utilisateur tuteur;
+
     @Column(name = "niveau_etude", nullable = false, length = 50)
     private String niveauEtude;
 }
+

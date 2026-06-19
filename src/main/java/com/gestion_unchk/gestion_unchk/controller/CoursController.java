@@ -20,6 +20,12 @@ public class CoursController {
     @Autowired
     private SequenceRepository sequenceRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private EtudiantRepository etudiantRepository;
+
     // ──────────────────── Cours ────────────────────
 
     @GetMapping
@@ -77,8 +83,45 @@ public class CoursController {
 
     @PostMapping("/{coursId}/sequences")
     public ResponseEntity<Sequence> createSequence(@PathVariable Long coursId, @RequestBody Sequence sequence) {
-        coursRepository.findById(coursId).ifPresent(sequence::setCours);
-        return ResponseEntity.ok(sequenceRepository.save(sequence));
+        return coursRepository.findById(coursId).map(cours -> {
+            sequence.setCours(cours);
+            Sequence saved = sequenceRepository.save(sequence);
+            
+            // Notify all students in the class of this course
+            if (cours.getClasse() != null) {
+                List<Etudiant> students = etudiantRepository.findByClasseId(cours.getClasse().getId());
+                for (Etudiant student : students) {
+                    if (student.getUtilisateur() != null) {
+                        // 1. Create standard notification (bell)
+                        Notification notif = new Notification();
+                        boolean isDevoir = saved.getExerciceChemin() != null || 
+                                           (saved.getTitre() != null && saved.getTitre().toLowerCase().contains("devoir"));
+                        
+                        notif.setTitre(isDevoir ? "Nouveau devoir disponible" : "Nouveau cours disponible");
+                        notif.setDescription("La séquence '" + saved.getTitre() + "' a été ajoutée dans le cours " + cours.getMatiere().getNom() + ".");
+                        notif.setCategory("schedule");
+                        notif.setLu(false);
+                        notif.setDestinataire(student.getUtilisateur());
+                        notif.setDateCreation(java.time.LocalDateTime.now());
+                        notificationRepository.save(notif);
+
+                        // 2. Create message notification (balloon)
+                        Notification msg = new Notification();
+                        String senderName = cours.getEnseignant() != null ? 
+                                           (cours.getEnseignant().getPrenom() + " " + cours.getEnseignant().getNom()) : 
+                                           "Votre Enseignant";
+                        msg.setTitre(senderName);
+                        msg.setDescription("Bonjour, j'ai publié le cours/devoir '" + saved.getTitre() + "' pour aujourd'hui.");
+                        msg.setCategory("message");
+                        msg.setLu(false);
+                        msg.setDestinataire(student.getUtilisateur());
+                        msg.setDateCreation(java.time.LocalDateTime.now());
+                        notificationRepository.save(msg);
+                    }
+                }
+            }
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/sequences/{id}")

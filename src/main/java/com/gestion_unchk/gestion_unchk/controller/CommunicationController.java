@@ -74,4 +74,23 @@ public class CommunicationController {
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/comptes-rendus/{id}")
+    public ResponseEntity<CompteRendu> updateCompteRendu(@PathVariable Long id, @RequestBody CompteRendu crDetails) {
+        return compteRenduRepository.findById(id).map(existing -> {
+            existing.setTitre(crDetails.getTitre());
+            existing.setDescription(crDetails.getDescription());
+            existing.setType(crDetails.getType());
+            if (crDetails.getCheminDocument() != null) {
+                existing.setCheminDocument(crDetails.getCheminDocument());
+            }
+            return ResponseEntity.ok(compteRenduRepository.save(existing));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/comptes-rendus/{id}")
+    public ResponseEntity<?> deleteCompteRendu(@PathVariable Long id) {
+        compteRenduRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

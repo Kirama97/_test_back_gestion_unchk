@@ -106,4 +106,60 @@ public class AdministrationController {
         utilisateurRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/personnel/{id}")
+    public ResponseEntity<?> updatePersonnel(@PathVariable Long id, @RequestBody Utilisateur userDetails) {
+        return utilisateurRepository.findById(id).map(existingUser -> {
+            existingUser.setNom(userDetails.getNom());
+            existingUser.setPrenom(userDetails.getPrenom());
+            existingUser.setEmail(userDetails.getEmail());
+            existingUser.setTelephone(userDetails.getTelephone());
+            existingUser.setDepartement(userDetails.getDepartement());
+            existingUser.setStatut(userDetails.getStatut());
+            if (userDetails.getMotDePasse() != null && !userDetails.getMotDePasse().isEmpty()) {
+                existingUser.setMotDePasse(passwordEncoder.encode(userDetails.getMotDePasse()));
+            }
+            Utilisateur updated = utilisateurRepository.save(existingUser);
+            return ResponseEntity.ok(updated);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/documents/{id}")
+    public ResponseEntity<Document> updateDocument(@PathVariable Long id, @RequestBody Document docDetails) {
+        return documentRepository.findById(id).map(existing -> {
+            existing.setTitre(docDetails.getTitre());
+            existing.setDescription(docDetails.getDescription());
+            existing.setType(docDetails.getType());
+            if (docDetails.getCheminFichier() != null) {
+                existing.setCheminFichier(docDetails.getCheminFichier());
+            }
+            return ResponseEntity.ok(documentRepository.save(existing));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/documents/{id}")
+    public ResponseEntity<?> deleteDocument(@PathVariable Long id) {
+        documentRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/budgets/{id}")
+    public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @RequestBody Budget budgetDetails) {
+        return budgetRepository.findById(id).map(existing -> {
+            existing.setAnnee(budgetDetails.getAnnee());
+            existing.setType(budgetDetails.getType());
+            existing.setMontant(budgetDetails.getMontant());
+            existing.setDescription(budgetDetails.getDescription());
+            if (budgetDetails.getCheminFichier() != null) {
+                existing.setCheminFichier(budgetDetails.getCheminFichier());
+            }
+            return ResponseEntity.ok(budgetRepository.save(existing));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/budgets/{id}")
+    public ResponseEntity<?> deleteBudget(@PathVariable Long id) {
+        budgetRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

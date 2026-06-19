@@ -26,6 +26,12 @@ public class AcademiqueController {
     @Autowired
     private MatiereRepository matiereRepository;
 
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     // ──────────────────── Promotions ────────────────────
 
     @GetMapping("/promotions")
@@ -97,9 +103,40 @@ public class AcademiqueController {
     }
 
     @PutMapping("/classes/{id}")
-    public ResponseEntity<Classe> updateClasse(@PathVariable Long id, @RequestBody Classe classe) {
-        classe.setId(id);
-        return ResponseEntity.ok(classeRepository.save(classe));
+    public ResponseEntity<Classe> updateClasse(@PathVariable Long id, @RequestBody Classe classeDetails) {
+        return classeRepository.findById(id).map(existing -> {
+            existing.setNom(classeDetails.getNom());
+            existing.setNiveauEtude(classeDetails.getNiveauEtude());
+            
+            if (classeDetails.getPromotion() != null) {
+                existing.setPromotion(classeDetails.getPromotion());
+            }
+            if (classeDetails.getFiliere() != null) {
+                existing.setFiliere(classeDetails.getFiliere());
+            }
+            
+            Utilisateur oldTuteur = existing.getTuteur();
+            Utilisateur newTuteur = classeDetails.getTuteur();
+            
+            existing.setTuteur(newTuteur);
+            Classe saved = classeRepository.save(existing);
+            
+            // If a new tutor is assigned and it has changed, notify them!
+            if (newTuteur != null && (oldTuteur == null || !oldTuteur.getId().equals(newTuteur.getId()))) {
+                utilisateurRepository.findById(newTuteur.getId()).ifPresent(tutor -> {
+                    Notification notif = new Notification();
+                    notif.setTitre("Nouvelle classe affectée");
+                    notif.setDescription("La classe '" + saved.getNom() + "' vous a été affectée pour le suivi du tutorat.");
+                    notif.setCategory("schedule");
+                    notif.setLu(false);
+                    notif.setDestinataire(tutor);
+                    notif.setDateCreation(java.time.LocalDateTime.now());
+                    notificationRepository.save(notif);
+                });
+            }
+            
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/classes/{id}")

@@ -1,15 +1,11 @@
 package com.gestion_unchk.gestion_unchk.controller;
 
-import com.gestion_unchk.gestion_unchk.model.EmploiDuTemps;
-import com.gestion_unchk.gestion_unchk.model.Formation;
-import com.gestion_unchk.gestion_unchk.repository.EmploiDuTempsRepository;
-import com.gestion_unchk.gestion_unchk.repository.FormationRepository;
+import com.gestion_unchk.gestion_unchk.model.*;
+import com.gestion_unchk.gestion_unchk.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -20,6 +16,9 @@ public class FormationController {
 
     @Autowired
     private EmploiDuTempsRepository emploiDuTempsRepository;
+
+    @Autowired
+    private ReunionRepository reunionRepository;
 
     // Formations / Cours
     @GetMapping("/formations")
@@ -33,6 +32,9 @@ public class FormationController {
         return ResponseEntity.ok(saved);
     }
 
+    @Autowired
+    private CoursRepository coursRepository;
+
     // Emplois du temps
     @GetMapping("/emplois-du-temps")
     public List<EmploiDuTemps> getEmploiDuTemps(@RequestParam(required = false) Long formationId) {
@@ -43,38 +45,116 @@ public class FormationController {
     }
 
     @PostMapping("/emplois-du-temps")
-    public ResponseEntity<EmploiDuTemps> createEmploiDuTemps(@RequestBody EmploiDuTemps emploiDuTemps) {
+    public ResponseEntity<?> createEmploiDuTemps(@RequestBody EmploiDuTemps emploiDuTemps) {
+        if (emploiDuTemps.getCours() == null || emploiDuTemps.getCours().getId() == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Le cours associé est obligatoire."));
+        }
+        
+        Cours cours = coursRepository.findById(emploiDuTemps.getCours().getId()).orElse(null);
+        if (cours == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Cours non trouvé."));
+        }
+        
+        if (cours.getEnseignant() != null) {
+            Long teacherId = cours.getEnseignant().getId();
+            String day = emploiDuTemps.getJourSemaine();
+            
+            List<EmploiDuTemps> teacherSlots = emploiDuTempsRepository.findByCoursEnseignantId(teacherId);
+            boolean exists = teacherSlots.stream()
+                    .anyMatch(slot -> slot.getJourSemaine().equalsIgnoreCase(day) && 
+                                     slot.getCours() != null && 
+                                     slot.getCours().getId().equals(cours.getId()));
+            if (exists) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Erreur : Cet enseignant a déjà planifié ce cours pour cette journée."));
+            }
+        }
+        
         EmploiDuTemps saved = emploiDuTempsRepository.save(emploiDuTemps);
         return ResponseEntity.ok(saved);
     }
 
+    @PutMapping("/emplois-du-temps/{id}")
+    public ResponseEntity<?> updateEmploiDuTemps(@PathVariable Long id, @RequestBody EmploiDuTemps details) {
+        return emploiDuTempsRepository.findById(id).map(existing -> {
+            if (details.getCours() == null || details.getCours().getId() == null) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Le cours associé est obligatoire."));
+            }
+            
+            Cours cours = coursRepository.findById(details.getCours().getId()).orElse(null);
+            if (cours == null) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Cours non trouvé."));
+            }
+            
+            if (cours.getEnseignant() != null) {
+                Long teacherId = cours.getEnseignant().getId();
+                String day = details.getJourSemaine();
+                
+                List<EmploiDuTemps> teacherSlots = emploiDuTempsRepository.findByCoursEnseignantId(teacherId);
+                boolean exists = teacherSlots.stream()
+                        .anyMatch(slot -> !slot.getId().equals(id) && 
+                                         slot.getJourSemaine().equalsIgnoreCase(day) && 
+                                         slot.getCours() != null && 
+                                         slot.getCours().getId().equals(cours.getId()));
+                if (exists) {
+                    return ResponseEntity.badRequest().body(java.util.Map.of("message", "Erreur : Cet enseignant a déjà planifié ce cours pour cette journée."));
+                }
+            }
+            
+            existing.setCours(cours);
+            existing.setJourSemaine(details.getJourSemaine());
+            existing.setHeureDebut(details.getHeureDebut());
+            existing.setHeureFin(details.getHeureFin());
+            existing.setSalle(details.getSalle());
+            existing.setMatiere(cours.getMatiere() != null ? cours.getMatiere().getNom() : details.getMatiere());
+            if (details.getClasse() != null) {
+                existing.setClasse(details.getClasse());
+            }
+            if (details.getFormation() != null) {
+                existing.setFormation(details.getFormation());
+            }
+            
+            EmploiDuTemps saved = emploiDuTempsRepository.save(existing);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/emplois-du-temps/{id}")
+    public ResponseEntity<?> deleteEmploiDuTemps(@PathVariable Long id) {
+        if (emploiDuTempsRepository.existsById(id)) {
+            emploiDuTempsRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     // Module 4: Réunions liées à la préparation des cours, suivi tutorat, évaluations
     @GetMapping("/reunions")
-    public List<Map<String, Object>> getReunions() {
-        Map<String, Object> r1 = new HashMap<>();
-        r1.put("id", 1L);
-        r1.put("titre", "Réunion de cadrage - Technologies Web");
-        r1.put("type", "Préparation des cours");
-        r1.put("date", "2026-06-15T10:00:00");
-        r1.put("salle", "Virtuelle (Google Meet)");
-        r1.put("statut", "Planifiée");
+    public List<Reunion> getReunions() {
+        return reunionRepository.findAll();
+    }
 
-        Map<String, Object> r2 = new HashMap<>();
-        r2.put("id", 2L);
-        r2.put("titre", "Suivi tutorat collectif - Promo 8");
-        r2.put("type", "Suivi tutorat");
-        r2.put("date", "2026-06-18T15:00:00");
-        r2.put("salle", "Virtuelle (Zoom)");
-        r2.put("statut", "Planifiée");
+    @PostMapping("/reunions")
+    public ResponseEntity<Reunion> createReunion(@RequestBody Reunion reunion) {
+        Reunion saved = reunionRepository.save(reunion);
+        return ResponseEntity.ok(saved);
+    }
 
-        Map<String, Object> r3 = new HashMap<>();
-        r3.put("id", 3L);
-        r3.put("titre", "Préparation des examens Semestre 2");
-        r3.put("type", "Préparation des évaluations");
-        r3.put("date", "2026-06-22T09:00:00");
-        r3.put("salle", "Virtuelle (Teams)");
-        r3.put("statut", "Planifiée");
+    @PutMapping("/reunions/{id}")
+    public ResponseEntity<Reunion> updateReunion(@PathVariable Long id, @RequestBody Reunion reunionDetails) {
+        return reunionRepository.findById(id).map(existing -> {
+            existing.setTitre(reunionDetails.getTitre());
+            existing.setType(reunionDetails.getType());
+            existing.setDate(reunionDetails.getDate());
+            existing.setSalle(reunionDetails.getSalle());
+            existing.setStatut(reunionDetails.getStatut());
+            Reunion saved = reunionRepository.save(existing);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
+    }
 
-        return List.of(r1, r2, r3);
+    @DeleteMapping("/reunions/{id}")
+    public ResponseEntity<?> deleteReunion(@PathVariable Long id) {
+        reunionRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

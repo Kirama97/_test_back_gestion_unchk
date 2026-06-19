@@ -33,6 +33,9 @@ public class EtudiantController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @Autowired(required = false)
     private ClasseRepository classeRepository;
 
@@ -188,6 +191,20 @@ public class EtudiantController {
     @PostMapping("/notes")
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         Note saved = noteRepository.save(note);
+        
+        // Find student and send notification
+        etudiantRepository.findById(saved.getEtudiant().getId()).ifPresent(etudiant -> {
+            Notification notif = new Notification();
+            notif.setTitre("Nouvelle note publiée");
+            String matName = saved.getMatiere() != null ? saved.getMatiere().getNom() : "un module";
+            notif.setDescription("Votre note pour " + matName + " a été publiée. Valeur : " + saved.getValeur() + "/20.");
+            notif.setCategory("exam");
+            notif.setLu(false);
+            notif.setDestinataire(etudiant.getUtilisateur());
+            notif.setDateCreation(java.time.LocalDateTime.now());
+            notificationRepository.save(notif);
+        });
+        
         return ResponseEntity.ok(saved);
     }
 
