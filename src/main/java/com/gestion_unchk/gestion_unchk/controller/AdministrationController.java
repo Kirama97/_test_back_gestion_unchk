@@ -7,12 +7,15 @@ import com.gestion_unchk.gestion_unchk.model.Utilisateur;
 import com.gestion_unchk.gestion_unchk.repository.BudgetRepository;
 import com.gestion_unchk.gestion_unchk.repository.DocumentRepository;
 import com.gestion_unchk.gestion_unchk.repository.UtilisateurRepository;
+import com.gestion_unchk.gestion_unchk.model.Notification;
+import com.gestion_unchk.gestion_unchk.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,9 @@ public class AdministrationController {
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,6 +53,22 @@ public class AdministrationController {
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
         document.setAuteur(auteur);
         Document saved = documentRepository.save(document);
+
+        // Generate notification for all students and teachers
+        List<Utilisateur> recipients = utilisateurRepository.findAll();
+        for (Utilisateur user : recipients) {
+            if (user.getRole() == Role.ETUDIANT || user.getRole() == Role.ENSEIGNANT || user.getRole() == Role.TUTEUR) {
+                Notification notif = new Notification();
+                notif.setTitre("Nouveau document disponible");
+                notif.setDescription("Le document '" + saved.getTitre() + "' a été publié.");
+                notif.setCategory("communication");
+                notif.setDestinataire(user);
+                notif.setDateCreation(LocalDateTime.now());
+                notif.setLu(false);
+                notificationRepository.save(notif);
+            }
+        }
+
         return ResponseEntity.ok(saved);
     }
 
