@@ -24,7 +24,7 @@ public class Document {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String type; // COURRIER_ARRIVE, COURRIER_DEPART, NOTE_SERVICE_INTERNE, NOTE_SERVICE_EXTERNE, NOTE_ADMINISTRATIVE, CIRCULAIRE
+    private String type; 
 
     @Column(name = "chemin_fichier", length = 255)
     private String cheminFichier;

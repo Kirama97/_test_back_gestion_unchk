@@ -20,7 +20,7 @@ public class FormationController {
     @Autowired
     private ReunionRepository reunionRepository;
 
-    // Formations / Cours
+    
     @GetMapping("/formations")
     public List<Formation> getAllFormations() {
         return formationRepository.findAll();
@@ -65,7 +65,7 @@ public class FormationController {
         }
     }
 
-    // Emplois du temps
+    
     @GetMapping("/emplois-du-temps")
     public List<EmploiDuTemps> getEmploiDuTemps(@RequestParam(required = false) Long formationId) {
         if (formationId != null) {
@@ -163,7 +163,7 @@ public class FormationController {
         return ResponseEntity.notFound().build();
     }
 
-    // Module 4: Réunions liées à la préparation des cours, suivi tutorat, évaluations
+    
     @GetMapping("/reunions")
     public List<Reunion> getReunions() {
         return reunionRepository.findAll();

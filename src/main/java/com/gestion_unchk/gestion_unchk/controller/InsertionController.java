@@ -21,7 +21,7 @@ public class InsertionController {
     @Autowired
     private PartenaireRepository partenaireRepository;
 
-    // Student professional follow-up
+    
     @GetMapping("/insertion/suivi")
     public List<SuiviEtudiant> getAllSuiviEtudiants() {
         return suiviEtudiantRepository.findAll();
@@ -29,7 +29,7 @@ public class InsertionController {
 
     @PostMapping("/insertion/suivi")
     public ResponseEntity<SuiviEtudiant> createOrUpdateSuiviEtudiant(@RequestBody SuiviEtudiant suiviEtudiant) {
-        // If a suivi already exists for the student, update it
+        
         if (suiviEtudiant.getEtudiant() != null && suiviEtudiant.getEtudiant().getId() != null) {
             suiviEtudiantRepository.findByEtudiantId(suiviEtudiant.getEtudiant().getId())
                     .ifPresent(existing -> suiviEtudiant.setId(existing.getId()));
@@ -38,7 +38,7 @@ public class InsertionController {
         return ResponseEntity.ok(saved);
     }
 
-    // Statistics for Insertion Module
+    
     @GetMapping("/insertion/stats")
     public ResponseEntity<Map<String, Object>> getInsertionStats() {
         List<SuiviEtudiant> suiviList = suiviEtudiantRepository.findAll();
@@ -66,7 +66,7 @@ public class InsertionController {
         return ResponseEntity.ok(stats);
     }
 
-    // Partners management
+    
     @GetMapping("/partenaires")
     public List<Partenaire> getAllPartenaires() {
         return partenaireRepository.findAll();

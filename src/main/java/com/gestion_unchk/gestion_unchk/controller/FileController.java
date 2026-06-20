@@ -25,13 +25,13 @@ public class FileController {
         }
 
         try {
-            // Ensure uploads directory exists
+            
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
 
-            // Create unique file name
+            
             String originalFilename = file.getOriginalFilename();
             String extension = "";
             if (originalFilename != null && originalFilename.contains(".")) {
@@ -39,11 +39,11 @@ public class FileController {
             }
             String uniqueName = UUID.randomUUID().toString() + extension;
 
-            // Save file
+            
             Path targetLocation = uploadPath.resolve(uniqueName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            // Construct response URL
+            
             String fileUrl = "/uploads/" + uniqueName;
             Map<String, String> response = new HashMap<>();
             response.put("url", fileUrl);

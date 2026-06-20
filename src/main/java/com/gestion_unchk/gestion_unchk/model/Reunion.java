@@ -21,7 +21,7 @@ public class Reunion {
     private String titre;
 
     @Column(nullable = false, length = 100)
-    private String type; // Préparation des cours, Suivi tutorat, Préparation des évaluations
+    private String type; 
 
     @Column(nullable = false)
     private LocalDateTime date;

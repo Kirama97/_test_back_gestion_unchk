@@ -24,7 +24,7 @@ public class CompteRendu {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String type; // REUNION, RENCONTRE, SEMINAIRE, WEBINAIRE, CONSEIL
+    private String type; 
 
     @Column(name = "chemin_document", length = 255)
     private String cheminDocument;

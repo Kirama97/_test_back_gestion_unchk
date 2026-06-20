@@ -49,7 +49,7 @@ public class Note {
     private BigDecimal valeur;
 
     @Column(nullable = false, length = 20)
-    private String type; // DEVOIR, EXAMEN
+    private String type; 
 
     @Column(name = "date_saisie", insertable = false, updatable = false)
     private LocalDateTime dateSaisie;

@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtils {
 
     private final String jwtSecret = "unchk_portal_super_secret_key_for_master_degree_2026_p8_evaluation";
-    private final int jwtExpirationMs = 86400000; // 24 heures
+    private final int jwtExpirationMs = 86400000; 
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
@@ -41,7 +41,7 @@ public class JwtUtils {
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(authToken);
             return true;
         } catch (Exception e) {
-            // Token invalide ou expiré
+            
         }
         return false;
     }

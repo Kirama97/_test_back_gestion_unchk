@@ -12,9 +12,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Controller for announcements (Annonces).
- */
+
 @RestController
 @RequestMapping("/api/annonces")
 public class AnnonceController {

@@ -28,7 +28,7 @@ public class SuiviEtudiant {
     private String bilanStages;
 
     @Column(name = "statut_insertion", nullable = false, length = 30)
-    private String statutInsertion; // AUTO_EMPLOI, SALARIE, EN_RECHERCHE
+    private String statutInsertion; 
 
     @Column(name = "salaire_initial", precision = 12, scale = 2)
     private BigDecimal salaireInitial;

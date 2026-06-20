@@ -24,7 +24,7 @@ public class Annonce {
     private String contenu;
 
     @Column(nullable = false, length = 50)
-    private String type; // ACADEMIQUE, CONVOCATION, REUNION, CHANGEMENT_EDT, INFO_IMPORTANTE
+    private String type; 
 
     @Column(name = "date_publication", nullable = false)
     private LocalDateTime datePublication = LocalDateTime.now();

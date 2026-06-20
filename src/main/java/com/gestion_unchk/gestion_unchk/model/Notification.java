@@ -30,7 +30,7 @@ public class Notification {
     private boolean lu = false;
 
     @Column(length = 50)
-    private String category; // schedule, exam, communication
+    private String category; 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "destinataire_id")

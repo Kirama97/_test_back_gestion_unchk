@@ -32,7 +32,7 @@ public class ExportController {
     @Autowired
     private SuiviEtudiantRepository suiviEtudiantRepository;
 
-    // ──────────────────── Personnel Exports ────────────────────
+    
 
     @GetMapping("/personnel/csv")
     public ResponseEntity<byte[]> exportPersonnelCsv() {
@@ -136,7 +136,7 @@ public class ExportController {
         }
     }
 
-    // ──────────────────── Etudiants Exports ────────────────────
+    
 
     @GetMapping("/etudiants/csv")
     public ResponseEntity<byte[]> exportEtudiantsCsv() {
@@ -250,7 +250,7 @@ public class ExportController {
         }
     }
 
-    // ──────────────────── Suivi Insertion Exports ────────────────────
+    
 
     @GetMapping("/suivi/csv")
     public ResponseEntity<byte[]> exportSuiviCsv() {

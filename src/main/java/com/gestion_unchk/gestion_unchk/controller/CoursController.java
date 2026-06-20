@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-/**
- * Controller for Cours and Sequences management.
- */
+
 @RestController
 @RequestMapping("/api/cours")
 public class CoursController {
@@ -26,7 +24,7 @@ public class CoursController {
     @Autowired
     private EtudiantRepository etudiantRepository;
 
-    // ──────────────────── Cours ────────────────────
+    
 
     @GetMapping
     public List<Cours> getAllCours() {
@@ -67,7 +65,7 @@ public class CoursController {
         return ResponseEntity.ok().build();
     }
 
-    // ──────────────────── Séquences ────────────────────
+    
 
     @GetMapping("/{coursId}/sequences")
     public List<Sequence> getSequencesByCours(@PathVariable Long coursId) {
@@ -87,12 +85,12 @@ public class CoursController {
             sequence.setCours(cours);
             Sequence saved = sequenceRepository.save(sequence);
             
-            // Notify all students in the class of this course
+            
             if (cours.getClasse() != null) {
                 List<Etudiant> students = etudiantRepository.findByClasseId(cours.getClasse().getId());
                 for (Etudiant student : students) {
                     if (student.getUtilisateur() != null) {
-                        // 1. Create standard notification (bell)
+                        
                         Notification notif = new Notification();
                         boolean isDevoir = saved.getExerciceChemin() != null || 
                                            (saved.getTitre() != null && saved.getTitre().toLowerCase().contains("devoir"));
@@ -105,7 +103,7 @@ public class CoursController {
                         notif.setDateCreation(java.time.LocalDateTime.now());
                         notificationRepository.save(notif);
 
-                        // 2. Create message notification (balloon)
+                        
                         Notification msg = new Notification();
                         String senderName = cours.getEnseignant() != null ? 
                                            (cours.getEnseignant().getPrenom() + " " + cours.getEnseignant().getNom()) : 

@@ -45,7 +45,7 @@ public class EtudiantController {
     @Autowired(required = false)
     private PromotionRepository promotionRepository;
 
-    // ──────────────────── Profil étudiant connecté ────────────────────
+    
 
     @GetMapping("/etudiant/me")
     public ResponseEntity<?> getMyProfile(Principal principal) {
@@ -64,7 +64,7 @@ public class EtudiantController {
         return ResponseEntity.ok(etudiant);
     }
 
-    // ──────────────────── CRUD Étudiants ────────────────────
+    
 
     @GetMapping("/etudiants")
     public List<Etudiant> getAllEtudiants() {
@@ -85,7 +85,7 @@ public class EtudiantController {
 
     @PostMapping("/etudiants")
     public ResponseEntity<Etudiant> createEtudiant(@RequestBody EtudiantDto dto) {
-        // Create Utilisateur
+        
         Utilisateur user = new Utilisateur();
         user.setNom(dto.getNom());
         user.setPrenom(dto.getPrenom());
@@ -99,7 +99,7 @@ public class EtudiantController {
         
         Utilisateur savedUser = utilisateurRepository.save(user);
 
-        // Create Etudiant
+        
         Etudiant etudiant = new Etudiant();
         etudiant.setId(savedUser.getId());
         etudiant.setUtilisateur(savedUser);
@@ -115,7 +115,7 @@ public class EtudiantController {
         etudiant.setDiplomes(dto.getDiplomes());
         etudiant.setAutresFormations(dto.getAutresFormations());
 
-        // Set academic relationships
+        
         if (dto.getClasseId() != null && classeRepository != null) {
             classeRepository.findById(dto.getClasseId()).ifPresent(etudiant::setClasse);
         }
@@ -165,12 +165,12 @@ public class EtudiantController {
 
     @DeleteMapping("/etudiants/{id}")
     public ResponseEntity<?> deleteEtudiant(@PathVariable Long id) {
-        // Due to CASCADE, deleting the utilisateur will delete the student details too
+        
         utilisateurRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    // ──────────────────── Notes ────────────────────
+    
 
     @GetMapping("/notes")
     public List<Note> getAllNotes() {
@@ -194,7 +194,7 @@ public class EtudiantController {
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         Note saved = noteRepository.save(note);
         
-        // Find student and send notification
+        
         etudiantRepository.findById(saved.getEtudiant().getId()).ifPresent(etudiant -> {
             Notification notif = new Notification();
             notif.setTitre("Nouvelle note publiée");
@@ -210,7 +210,7 @@ public class EtudiantController {
         return ResponseEntity.ok(saved);
     }
 
-    // ──────────────────── Emploi du temps ────────────────────
+    
 
     @GetMapping("/emploi-du-temps/me")
     public ResponseEntity<?> getMyEmploiDuTemps(Principal principal) {
@@ -234,7 +234,7 @@ public class EtudiantController {
         return emploiDuTempsRepository.findByCoursEnseignantId(enseignantId);
     }
 
-    // ──────────────────── Cours de l'étudiant ────────────────────
+    
 
     @GetMapping("/cours/me")
     public ResponseEntity<?> getMyCours(Principal principal) {

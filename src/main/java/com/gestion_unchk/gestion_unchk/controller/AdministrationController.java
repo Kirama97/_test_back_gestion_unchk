@@ -38,7 +38,7 @@ public class AdministrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Document archiving
+    
     @GetMapping("/documents")
     public List<Document> getAllDocuments(@RequestParam(required = false) String type) {
         if (type != null && !type.isEmpty()) {
@@ -54,7 +54,7 @@ public class AdministrationController {
         document.setAuteur(auteur);
         Document saved = documentRepository.save(document);
 
-        // Generate notification for all students and teachers
+        
         List<Utilisateur> recipients = utilisateurRepository.findAll();
         for (Utilisateur user : recipients) {
             if (user.getRole() == Role.ETUDIANT || user.getRole() == Role.ENSEIGNANT || user.getRole() == Role.TUTEUR) {
@@ -72,7 +72,7 @@ public class AdministrationController {
         return ResponseEntity.ok(saved);
     }
 
-    // Budget Management
+    
     @GetMapping("/budgets")
     public List<Budget> getAllBudgets() {
         return budgetRepository.findAll();
@@ -84,10 +84,10 @@ public class AdministrationController {
         return ResponseEntity.ok(saved);
     }
 
-    // HR - Personnel Directory
+    
     @GetMapping("/personnel")
     public List<Utilisateur> getPersonnel() {
-        // Return all staff members (non-students)
+        
         return utilisateurRepository.findAll().stream()
                 .filter(u -> u.getRole() != Role.ETUDIANT)
                 .collect(Collectors.toList());
@@ -95,7 +95,7 @@ public class AdministrationController {
 
     @PostMapping("/personnel")
     public ResponseEntity<Utilisateur> createPersonnel(@RequestBody Utilisateur user) {
-        // Encrypt the password before saving
+        
         user.setMotDePasse(passwordEncoder.encode(user.getMotDePasse()));
         Utilisateur saved = utilisateurRepository.save(user);
         return ResponseEntity.ok(saved);

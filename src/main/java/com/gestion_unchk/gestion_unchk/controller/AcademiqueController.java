@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-/**
- * Controller for academic management: Promotions, Filières, Classes, Matières.
- */
+
 @RestController
 @RequestMapping("/api/academique")
 public class AcademiqueController {
@@ -32,7 +30,7 @@ public class AcademiqueController {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    // ──────────────────── Promotions ────────────────────
+    
 
     @GetMapping("/promotions")
     public List<Promotion> getAllPromotions() {
@@ -56,7 +54,7 @@ public class AcademiqueController {
         return ResponseEntity.ok().build();
     }
 
-    // ──────────────────── Filières ────────────────────
+    
 
     @GetMapping("/filieres")
     public List<Filiere> getAllFilieres() {
@@ -80,7 +78,7 @@ public class AcademiqueController {
         return ResponseEntity.ok().build();
     }
 
-    // ──────────────────── Classes ────────────────────
+    
 
     @GetMapping("/classes")
     public List<Classe> getAllClasses() {
@@ -121,7 +119,7 @@ public class AcademiqueController {
             existing.setTuteur(newTuteur);
             Classe saved = classeRepository.save(existing);
             
-            // If a new tutor is assigned and it has changed, notify them!
+            
             if (newTuteur != null && (oldTuteur == null || !oldTuteur.getId().equals(newTuteur.getId()))) {
                 utilisateurRepository.findById(newTuteur.getId()).ifPresent(tutor -> {
                     Notification notif = new Notification();
@@ -145,7 +143,7 @@ public class AcademiqueController {
         return ResponseEntity.ok().build();
     }
 
-    // ──────────────────── Matières ────────────────────
+    
 
     @GetMapping("/matieres")
     public List<Matiere> getAllMatieres() {

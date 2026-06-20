@@ -30,7 +30,7 @@ public class EmploiDuTemps {
     private Cours cours;
 
     @Column(name = "jour_semaine", nullable = false, length = 15)
-    private String jourSemaine; // LUNDI, MARDI, MERCREDI, JEUDI, VENDREDI, SAMEDI
+    private String jourSemaine; 
 
     @Column(name = "heure_debut", nullable = false)
     private LocalTime heureDebut;

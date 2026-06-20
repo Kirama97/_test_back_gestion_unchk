@@ -40,7 +40,7 @@ public class CommunicationController {
         compteRendu.setAuteur(auteur);
         CompteRendu saved = compteRenduRepository.save(compteRendu);
 
-        // Generate notification for all students and teachers
+        
         List<Utilisateur> recipients = utilisateurRepository.findAll();
         for (Utilisateur user : recipients) {
             if (user.getRole() == Role.ETUDIANT || user.getRole() == Role.ENSEIGNANT || user.getRole() == Role.TUTEUR) {

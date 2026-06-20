@@ -28,7 +28,7 @@ public class Formation {
     private LocalDate dateFin;
 
     @Column(name = "type_formation", nullable = false, length = 50)
-    private String typeFormation; // INITIALE, CONTINUE, CERTIFICATION, PRIVE
+    private String typeFormation; 
 
     @Column(nullable = false, length = 50)
     private String niveau;
@@ -41,5 +41,5 @@ public class Formation {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "formateur_id")
-    private Utilisateur formateur; // Enseignant ou Tuteur responsable
+    private Utilisateur formateur; 
 }

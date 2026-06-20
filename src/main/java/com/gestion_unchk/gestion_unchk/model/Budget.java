@@ -22,7 +22,7 @@ public class Budget {
     private Integer annee;
 
     @Column(nullable = false, length = 50)
-    private String type; // PROJET_BUDGET, NOTE_ORIENTATION, BUDGET_REALISE
+    private String type; 
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal montant;
